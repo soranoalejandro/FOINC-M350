@@ -978,7 +978,7 @@
 #629 -p0 -a3  -t0 -s1"Tool open input signal(M303)" -m16 -min=0.000 -max=24.000
 #632 -p0 -a3  -t0 -s1"Dust cover open/close input signal(M305/M306)" -m16 -min=0.000 -max=24.000
 
-#635 -p0 -a3  -t0 -s1"Nverter alarm input signal" -m16 -min=0.000 -max=24.000
+#635 -p0 -a3  -t0 -s1"Inverter alarm input signal" -m16 -min=0.000 -max=24.000
 #638 -p0 -a3  -t0 -s1"Custom alarm input signal 1" -m16 -min=0.000 -max=24.000
 #641 -p0 -a3  -t0 -s1"Custom alarm input signal 2" -m16 -min=0.000 -max=24.000
 #644 -p0 -a3  -t0 -s1"Custom alarm input signal 3" -m16 -min=0.000 -max=24.000
