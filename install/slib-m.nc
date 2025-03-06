@@ -20,16 +20,16 @@ M99
 
 O10030
 M5M9M11
-IF #730==2 GOTO10
-IF #730==1 GOTO20
+IF #730==2 GOTO10 ; go to workpiece zero
+IF #730==1 GOTO20 ; go to reference
 GOTO30
 N10
-G90 G00 Z#569
+G90 G00 Z#569 ; safe height, param 69
 G90 G00 X0 Y0 A0 B0
 GOTO30
 
 N20
-G53Z#624
+G53Z#624 ; machine position after Z go home
 #13=0
 #14=0
 #15=0
@@ -39,23 +39,23 @@ G53X#622Y#623Z#624A#13B#14C#15
 GOTO30
 
 N30
-#701 = #701+1
-#702 = #702+1
-#1506 = 30
+#701 = #701+1 ; total processed pieces
+#702 = #702+1 ; current processed pieces
+#1506 = 30 ; single piece processing finished mark
 M99
 
 
 O10047
-#701 = #701+1
-#702 = #702+1
-#1506 = 47
-IF #702==#703 GOTO1
+#701 = #701+1 ; total processed pieces
+#702 = #702+1 ; current processed pieces
+#1506 = 47 ; single piece processing finished mark
+IF #702==#703 GOTO1 ; current pieces = planned pieces
 GOTO2
 N1
 #702 = 0
 
-#1505 = 1(循环次数已到!)
-#1620 = 1 (暂停)
+#1505 = 1(The number of cycles has been completed!)
+#1620 = 1 (Pause)
 G04 P500
 N2
 M99
@@ -240,9 +240,8 @@ O10091
 #1572=0
 M99
 
-
-/* M100 开始为功能性代码*/
-//全部归零标志置位
+; START OF M100...M199 MACROS
+; M100 - set all zero flags for X, Y, Z, A
 O10100
 #1515=1
 #1516=1
@@ -250,12 +249,12 @@ O10100
 #1518=1
 M99
 
-//全部刀换刀对刀
+; M101 - change and aling all tools in the magazine
 O10101
-IF #1302==0 GOTO4; 	无刀库退出
-IF #1301==0 GOTO4; 
+IF #1302==0 GOTO4; machine without automatic tool magazine
+IF #1301==0 GOTO4; capacity of magazine is equal to zero
 
-T0  //当前刀还刀
+T0  ; return the current tool to the magazine
 #2 = 1
 WHILE [#2 <= #1301] DO1   
 T#2
