@@ -264,22 +264,22 @@ END1
 N4
 M99
 
-//推料动作
+; M102 - Pushing operation
 O10102
-M159  //真空泵关闭
-M157 // 定位气缸关闭
+M159 ; turn off vacuum pump
+M157 ; retract front position cylinder
 G53 Z#1306 F#563 
-#1503 = 1(移动到推料起点.速度:63号参数)
-G53 X#1320 Y#1321 F#563 //移动到推料起点
-M160  //推料打开
-G04 P#1322 //推料延时 设置
-#1503 = 1(移动到推料终点.速度:827号参数)
-G53 X#1323 Y#1324 F#1327 //移动到推料终点
-M163  //关闭吸尘器
-#1503 = 1(推料完成后退位置.速度:63号参数)
-G53 X#1325 Y#1326  F#563 //推料完成后退位置
-M156  //定位气缸打开
-M161 //推料关闭
+#1503 = 1(Move to the starting point of pushing. Speed: Parameter 63)
+G53 X#1320 Y#1321 F#563 ; move to the starting point of pushing
+M160  ; extend tool pushing cylinder
+G04 P#1322 ; pushing delay
+#1503 = 1(Move to the end point of pushing. Speed: Parameter 827)
+G53 X#1323 Y#1324 F#1327 ; move to the end point of pushing
+M163  ; Turn off the vacuum cleaner
+#1503 = 1(Retract position after pushing. Speed: Parameter 63)
+G53 X#1325 Y#1326  F#563 ; retract position after pushing
+M156 ; extend front position cylinder
+M161 ; retract tool pushing cylinder
 M99
 
 //程序开始操作
