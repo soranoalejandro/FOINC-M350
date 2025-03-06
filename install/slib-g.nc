@@ -623,7 +623,6 @@ M99
 
 
 
-
 O20000(tool change program)
 
 (Record the workpiece position before tool change)
@@ -631,106 +630,87 @@ O20000(tool change program)
 #3 = #881
 #4 = #882
 #5 = #883
-#1514 = 1  //
+#1514 = 1  // pause signal
 
-IF #1300>[#1301+20] GOTO4; Greater than virtual and actual
-IF #1>[#1301+20] GOTO4; Greater than virtual and actual
-IF #1302==0 GOTO4; 	Exit without tool magazine
-IF #1300==#1 GOTO4; Exit if the target tool is the same as the current tool
-
-IF #720 == 0 GOTO50;
-(Each axis zero mark judgment)
-IF [#1515+#1516+#1517]>=3 GOTO50;
-#1503 = 1(X, Y, Z axis machinery is not fully zeroed!)
+; early exit conditions
+IF #1300>[#1301+20] GOTO4 ; current tool > capacity + virtual
+IF #1>[#1301+20] GOTO4 ; new tool > capacity + virtual
+IF #1300==#1 GOTO4 ; new tool == current tool, exit
+IF #1302==0 GOTO4 ; machine without tool magazine
+IF #720 == 0 GOTO50 ; skip home point checking
+IF [#1515+#1516+#1517]>=3 GOTO50 ; home point ok, continue
+#1503 = 1(X, Y, Z axis are not fully zeroed!)
 G04 P10
-GOTO4 ;End
+GOTO4 ; exit
 
+; initial commands
 N50
-
-
-
-
 M151 ;Dust cover closed
 M153 ;Tool magazine closed
 M155 ;Tool locking
 
+; select tool removal method
+IF #1300>#1301 GOTO20 ; virtual tool remove
+IF #1302==1 GOTO25 ; multiple processes removal
+IF #1302==2 GOTO22 ; gantry straight row removal
+IF #1302==3 GOTO23 ; fixed straight row removal
+IF #1302==4 GOTO4 ; disc tool magazine
+GOTO4 ; exit
 
-(Initial entry)
-IF #1300>#1301 GOTO20;(Virtual tool action)
+; select tool loading method
+N17
+IF #1>#1301 GOTO30 ; virtual tool load
+IF #1302==1 GOTO35 ; multiple processes
+IF #1302==2 GOTO32 ; gantry straight row
+IF #1302==3 GOTO33 ; fixed straight row
+IF #1302==4 GOTO4 ; disc tool magazine
+GOTO4 ; exit
 
-IF #1302==1 GOTO25; 	Multiple processes
-IF #1302==2 GOTO22; 	Gantry straight row
-IF #1302==3 GOTO23; 	Fixed straight row
-IF #1302==4 GOTO4; 	Disc tool magazine
-
-N17; Only tool change
-IF #1>#1301 GOTO30;
-IF #1302==1 GOTO35; 	Multiple processes
-IF #1302==2 GOTO32; 	Gantry straight row
-IF #1302==3 GOTO33; 	Fixed straight row
-IF #1302==4 GOTO4; 	Disc tool magazine
-
-
-
-
-(---------Fixed straight tool change process----------)
+(---------fixed straight row removal----------)
 N23
-#1503 = 1(Fixed straight tool change starts!)
+#1503 = 1(Fixed straight tool change started!)
+M306 ; dust cover closed detection
+M05 ; turn off spindle
+M300 ; wait spindle stop signal
 
-M306 ;Dust cover closed detection
-
-M05 ;Spindle closed
-M300
-
-#1503 = 1(Spindle lifted to the upper position for tool change...)
-G53 Z#1306 F#1312 ;Spindle lifted to the upper position for tool change
-
-#1503 = 1(Spindle moves to the tool change leading point Y...)
-G53 Y#1309 F#1311 ;Spindle moves to the tool change leading point Y
-
-#1503 = 1(Spindle moves to the current tool coordinate X...)
-G53 X[#[1330+#1300-1]] F#1311 ;X coordinate
-
-#1503 = 1(spindle moves to the tool change lower position...)
+#1503 = 1(tool change, Z upper position...)
+G53 Z#1306 F#1312
+#1503 = 1(tool change leading point Y...)
+G53 Y#1309 F#1311
+#1503 = 1(tool X coordinate...)
+G53 X[#[1330+#1300-1]] F#1311
+#1503 = 1(tool change, Z lower position for current tool...)
 ;G53 Z#1307 F#1312 ;
-G53 Z[#[1370+#1300-1]] F#1312 ;Z each tool changes to the lower position
+G53 Z[#[1370+#1300-1]] F#1312
+#1503 = 1(tool Y coordinate...)
+G53 Y[#[1350+#1300-1]] F#1313
 
-#1503 = 1(spindle moves to the current tool coordinate Y...)
-G53 Y[#[1350+#1300-1]] F#1313 ;Y coordinate
+M154 ; tool release
+G04 P100
+M301 ; wait tool release signal
 
-
-M154 ;Spindle tool release
-G04 P100 ;100ms 
-M301 ;Spindle release detection
-
-#1503 = 1(spindle lifts to the upper position for tool change...)
-G53 Z#1306 F#1312 ;spindle lifts to the upper position for tool change
-
-#1503 = 1(spindle moves to the target tool XY coordinates...)
+#1503 = 1(tool change, Z upper position...)
+G53 Z#1306 F#1312
+#1503 = 1(target tool XY coordinates...)
 G53 X[#[1330+#1-1]] Y[#[1350+#1-1]] F#1311 ;
-
-
-#1503 = 1(spindle moves to the lower position for tool change...)
+#1503 = 1(tool change, Z lower position for new tool...)
 ;G53 Z#1307 F#1312 ;
-G53 Z[#[1370+#1-1]] F#1312 ;each tool of Z changes to the lower position
+G53 Z[#[1370+#1-1]] F#1312
 
-
-#1503 = 1(spindle tool lock)
+#1503 = 1(tool lock)
 M155 ;tool lock
 G04 P200
 M302 ;tool lock detection
 
+#1503 = 1(tool change leading point Y...)
+G53 Y#1309 F#1313
+#1503 = 1(tool change, Z upper position...)
+G53 Z#1306 F#1312
+GOTO5 ; fixed straight tool change completed
+(---------fixed straight row removal completed----------)
 
-#1503 = 1(spindle moves to tool change leading point Y...)
-G53 Y#1309 F#1313 ;spindle moves to tool change leading point Y
 
-#1503 = 1(spindle lifts to tool change upper position...)
-G53 Z#1306 F#1312 ;spindle lifts to tool change upper position
-GOTO5;fixed straight tool change completed
-
-
-(--------Multi-process tool change process---------)
-
+(--------Multi-process tool removal process---------)
 N25
 IF#1300 == 0 GOTO17;If the current tool = 0, only tool change action
 IF #[1552+16-1]==0 GOTO45
@@ -748,61 +728,45 @@ IF #1!=0 GOTO51;(Only unload the tool and exit)
 GOTO3
 N51
 IF #1!=0 GOTO17;Target tool change
-
-(--------Multi-process tool unloading completed--------)
-
+(--------Multi-process tool removal completed--------)
 
 
-(-----Gantry direct tool change process-----)
+(-----Gantry direct tool removal process-----)
 N22
-
-
 IF#1300 == 0 GOTO17;If the current tool = 0, only tool change action
-
 #1503 = 1(Gantry direct tool change starts!)
-
-M05  ;Spindle off
-
-M151 ;Dust cover closed
-M306 ;Dust cover closed detection
+M05  ; spindle off
+M151 ; dust cover closed
+M306 ; dust cover closed detection
 
 #1503 = 1(Spindle lifted to the upper position for tool change, speed: parameter 812)
 G53 Z#1306 F#1312 ;Spindle lifted to the upper position for tool change
-
 #1503 = 1(Spindle moves to the current tool coordinate X, speed: parameter 811)
 G53 X[#[1330+#1300-1]] F#1311 ;X coordinate
-
-#1503 = 1(spindle moves to the current tool coordinate Z, speed: parameter 819)
+#1503 = 1(Spindle moves to the current tool coordinate Z, speed: parameter 819)
 G53 Z[#[1370+#1300-1]] F#1319 ;
 
-M300 ;spindle stop detection
-M152 ;tool magazine open
-M303 ;ool magazine open detection
-
-M154 ;spindle tool release
-M301 ;spindle release detection
-
-#1300 = 0
+M300 ; spindle stop detection
+M152 ; tool magazine open
+M303 ; tool magazine open detection
+M154 ; spindle tool release
+M301 ; spindle release detection
+#1300 = 0 ; current tool = 0
 
 #1503 = 1(spindle lifts to the tool change upper position, speed: parameter 812)
 G53 Z#1306 F#1312 ;spindle lifts to the tool change upper position
-
 
 IF #1!=0 GOTO41;(only unload the tool and exit)
 M153 ;tool magazine closed
 M304 ;tool magazine closed detection
 GOTO3
-
 N41
 IF #1!=0 GOTO17;target tool change
+(-----Gantry direct tool removal process-----)
 
-
-(-------tool unloading completed------)
 
 (--------tool change for multiple processes-------)
-
 N35
-
 IF #[1552+16-1]==0 GOTO55
 M5
 N55
@@ -815,70 +779,51 @@ M175
 M[168+[#1-1]*2] ;Open the cylinder
 M141
 GOTO5;
-;Multi-process tool change completed
-
-
+(--------tool change for multiple processes completed-------)
 
 
 (-------Gantry straight row starts------)
 N32
+;M05 ; spindle off
 
-;M05  ;Spindle off
+#1503 = 1(upper position of tool change, speed: parameter 812)
+G53 Z#1306 F#1312
 
-#1503 = 1(spindle lifts to the upper position of tool change, speed: parameter 812)
-G53 Z#1306 F#1312 ;spindle lifts to the upper position of tool change
+M300 ; spindle stop detection
+M151 ; dust cover closed
+M306 ; dust cover closed detection
+M154 ; spindle tool release
+M301 ; spindle release detection
 
-
-M300 ;spindle stop detection
-
-M151  ;dust cover closed
-M306 ;dust cover closed detection
-
-M154 ;spindle tool release
-M301 ;spindle release detection
-
-#1503 = 1(spindle moves to the target tool X coordinate, speed: parameter 811)
+#1503 = 1(target tool X coordinate, speed: parameter 811)
 G53 X[#[1330+#1-1]] F#1311 ;
 
 M152  ;tool magazine open
 M303 ;tool magazine open detection
 
-
-#1503 = 1(spindle moves to the target tool Z coordinate, speed: parameter 812)
+#1503 = 1(target tool Z coordinate, speed: parameter 812)
 G53 Z[#[1370+#1-1]]+10 F#1319 ;
 G53 Z[#[1370+#1-1]] F1000 ;
-
-
 
 M155 ;Tool locking
 G04 P#1314
 M302 ;Tool locking detection
-
-#1300 = #1;
-
-
+#1300 = #1 ; update current tool number to loaded tool
 M153 ;Tool magazine closed
 M304 ;Tool magazine closed detection
 
-
 #1503 = 1(spindle lifted to the upper position for tool change, speed: parameter 812)
 G53 Z#1306 F#1312 ;Spindle lifted to the upper position for tool change
-
-
-
 GOTO5;Gantry vertical tool change completed
 
-(-----------Virtual tool------------)
+
+(-----------Virtual tool unload------------)
 N20
-
-
 IF#1300 == 0 GOTO17;If the current tool = 0, only tool change action
-
 IF #1303==0 GOTO4; 	Virtual tool is not supported
 
 #1503 = 1(Current virtual tool unloads!)
-
-#1503 = 1(Spindle moves to manual tool unload position, speed: parameter 811)
+#1503 = 1(Manual tool unload position, speed: parameter 811)
 G53 Z#1318 F#1311 ;
 G90 G53 X#1316 Y#1317 F#1311
 
@@ -899,7 +844,7 @@ END15
 IF #1==0 GOTO6;(Only unload the tool and exit)
 IF #1!=0 GOTO17;Change the target tool
 
-(---------unload the tool completed-------)
+(---------virtual unload the tool completed-------)
 
 
 

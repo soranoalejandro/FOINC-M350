@@ -1401,7 +1401,7 @@ IF #2==0 GOTO30
 N30
 M99
 
-; M150 - Dust cover close
+; M151 - Dust cover close
 O10151 
 #1 = #1262 ; output port
 #2 = #1263 ; output enable
@@ -1411,7 +1411,7 @@ IF #2==0 GOTO30
 N30
 M99
 
-; M152 - 刀库打开
+; M152 - magazine extend - 刀库打开
 O10152 
 #1 = #1253 ; output port
 #2 = #1254 ; output enable
@@ -1421,7 +1421,7 @@ IF #2==0 GOTO30
 N30
 M99
 
-; M153 - 刀库关闭
+; M153 - magazine retract - 刀库关闭
 O10153 
 #1 = #1253 ; output port
 #2 = #1254 ; output enable
@@ -1431,7 +1431,7 @@ IF #2==0 GOTO30
 N30
 M99
 
-; M154 - 主轴松刀输出
+; M154 - tool realease output - 主轴松刀输出
 O10154 
 #1 = #1250 ; output port
 #2 = #1251 ; output enable
@@ -1441,7 +1441,7 @@ IF #2==0 GOTO30
 N30
 M99
 
-; M155 - 主轴锁紧输出
+; M155 - tool lock output - 主轴锁紧输出
 O10155 
 #1 = #1250 ; output port
 #2 = #1251 ; output enable
@@ -1451,7 +1451,7 @@ IF #2==0 GOTO30
 N30
 M99
 
-; M156 - 定位气缸打开
+; M156 - spindle front position - 定位气缸打开
 O10156 
 #1 = #1256 ; output port
 #2 = #1257 ; output enable
@@ -1461,7 +1461,7 @@ IF #2==0 GOTO30
 N30
 M99
 
-; M157 - 定位气缸关闭
+; M157 - spindle retracted position - 定位气缸关闭
 O10157 
 #1 = #1256 ; output port
 #2 = #1257 ; output enable
@@ -1471,7 +1471,7 @@ IF #2==0 GOTO30
 N30
 M99
 
-; M158 - 真空泵打开
+; M158 - vacuum pump on - 真空泵打开
 O10158 
 #1 = #1259 ; output port
 #2 = #1260 ; output enable
@@ -1481,7 +1481,7 @@ IF #2==0 GOTO30
 N30
 M99
 
-; M159 - 真空泵关闭
+; M159 - vacuum pump off - 真空泵关闭
 O10159 
 #1 = #1259 ; output port
 #2 = #1260 ; output enable
@@ -1491,7 +1491,7 @@ IF #2==0 GOTO30
 N30
 M99
 
-; M160 - 推料打开
+; M160 - tool push cylinder extended - 推料打开
 O10160
 #1 = #1265 ; output port
 #2 = #1266 ; output enable
@@ -1501,7 +1501,7 @@ IF #2==0 GOTO30
 N30
 M99
 
-; M161 - 退料关闭
+; M161 - tool push cylinder retracted - 退料关闭
 O10161 
 #1 = #1265 ; output port
 #2 = #1266 ; output enable
@@ -1511,7 +1511,7 @@ IF #2==0 GOTO30
 N30
 M99
 
-; M162 - 吸尘器打开
+; M162 - vacuum cleaner on - 吸尘器打开
 O10162
 #1 = #1268 ; output port
 #2 = #1269 ; output enable
@@ -1521,7 +1521,7 @@ IF #2==0 GOTO30
 N30
 M99
 
-; M163 - 吸尘器关闭
+; M163 - vacuum cleaner off - 吸尘器关闭
 O10163 
 #1 = #1268 ; output port
 #2 = #1269 ; output enable
@@ -1531,7 +1531,7 @@ IF #2==0 GOTO30
 N30
 M99
 
-; M164 - 左定位气缸打开
+; M164 - left positioning on - 左定位气缸打开
 O10164
 #1 = #1271 ; output port
 #2 = #1272 ; output enable
@@ -1541,7 +1541,7 @@ IF #2==0 GOTO30
 N30
 M99
 
-; M165 - 左定位气缸关闭
+; M165 - left positioning off - 左定位气缸关闭
 O10165
 #1 = #1271 ; output port
 #2 = #1272 ; output enable
@@ -1551,7 +1551,7 @@ IF #2==0 GOTO30
 N30
 M99
 
-; M166 - 真空阀气缸打开
+; M166 - vacuum valve cylinder on - 真空阀气缸打开
 O10166
 #1 = #1274 ; output port
 #2 = #1275 ; output enable
@@ -1561,7 +1561,7 @@ IF #2==0 GOTO30
 N30
 M99
 
-; M167 - 真空阀气缸关闭
+; M167 - vacuum valve cylinder off - 真空阀气缸关闭
 O10167
 #1 = #1274 ; output port
 #2 = #1275 ; output enable
