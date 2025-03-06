@@ -624,350 +624,336 @@ M99
 
 
 
-O20000(换刀程序)
+O20000(tool change program)
 
-(记录换刀前工件位置)
+(Record the workpiece position before tool change)
 #2 = #880
 #3 = #881
 #4 = #882
 #5 = #883
 #1514 = 1  //
 
-IF #1300>[#1301+20] GOTO4; 大于虚拟和实际
-IF #1>[#1301+20] GOTO4; 大于虚拟和实际
-IF #1302==0 GOTO4; 	无刀库退出
-IF #1300==#1 GOTO4; 目标刀具与当前刀具相同退出
+IF #1300>[#1301+20] GOTO4; Greater than virtual and actual
+IF #1>[#1301+20] GOTO4; Greater than virtual and actual
+IF #1302==0 GOTO4; 	Exit without tool magazine
+IF #1300==#1 GOTO4; Exit if the target tool is the same as the current tool
 
 IF #720 == 0 GOTO50;
-(各轴回零标志判断)
+(Each axis zero mark judgment)
 IF [#1515+#1516+#1517]>=3 GOTO50;
-#1503 = 1(X.Y,Z轴机械未全部归零!)
+#1503 = 1(X, Y, Z axis machinery is not fully zeroed!)
 G04 P10
-GOTO4 ;结束
+GOTO4 ;End
 
 N50
 
 
 
 
-M151 //除尘罩关闭
-M153 //刀库关闭
-M155 //刀具锁紧
+M151 ;Dust cover closed
+M153 ;Tool magazine closed
+M155 ;Tool locking
 
 
-(初始入口)
-IF #1300>#1301 GOTO20;(虚拟刀动作)
+(Initial entry)
+IF #1300>#1301 GOTO20;(Virtual tool action)
 
-IF #1302==1 GOTO25; 	多工序
-IF #1302==2 GOTO22; 	龙门架直排
-IF #1302==3 GOTO23; 	固定直排
-IF #1302==4 GOTO4; 	圆盘刀库
+IF #1302==1 GOTO25; 	Multiple processes
+IF #1302==2 GOTO22; 	Gantry straight row
+IF #1302==3 GOTO23; 	Fixed straight row
+IF #1302==4 GOTO4; 	Disc tool magazine
 
-N17; 只换刀
+N17; Only tool change
 IF #1>#1301 GOTO30;
-IF #1302==1 GOTO35; 	多工序
-IF #1302==2 GOTO32; 	龙门架直排
-IF #1302==3 GOTO33; 	固定直排
-IF #1302==4 GOTO4; 	圆盘刀库
+IF #1302==1 GOTO35; 	Multiple processes
+IF #1302==2 GOTO32; 	Gantry straight row
+IF #1302==3 GOTO33; 	Fixed straight row
+IF #1302==4 GOTO4; 	Disc tool magazine
 
 
 
 
-(---------------固定直排换刀流程-----------------)
+(---------Fixed straight tool change process----------)
 N23
-#1503 = 1(固定直排换刀开始!)
+#1503 = 1(Fixed straight tool change starts!)
 
-M306 //除尘罩关闭检测
+M306 ;Dust cover closed detection
 
-M05 ;主轴关
+M05 ;Spindle closed
 M300
 
-#1503 = 1(主轴上抬到换刀上位处...)
-G53 Z#1306 F#1312 ;主轴上抬到换刀上位处
+#1503 = 1(Spindle lifted to the upper position for tool change...)
+G53 Z#1306 F#1312 ;Spindle lifted to the upper position for tool change
 
-#1503 = 1(主轴移动换刀前置点Y处...)
-G53 Y#1309 F#1311 ;主轴移动换刀前置点Y处
+#1503 = 1(Spindle moves to the tool change leading point Y...)
+G53 Y#1309 F#1311 ;Spindle moves to the tool change leading point Y
 
-#1503 = 1(主轴移动当前刀具坐标X处...)
-G53 X[#[1330+#1300-1]] F#1311 ;X坐标处
+#1503 = 1(Spindle moves to the current tool coordinate X...)
+G53 X[#[1330+#1300-1]] F#1311 ;X coordinate
 
-#1503 = 1(主轴移动到换刀下位...)
-//G53 Z#1307 F#1312 ;
-G53 Z[#[1370+#1300-1]] F#1312 ;Z的每把刀换刀下位
+#1503 = 1(spindle moves to the tool change lower position...)
+;G53 Z#1307 F#1312 ;
+G53 Z[#[1370+#1300-1]] F#1312 ;Z each tool changes to the lower position
 
-#1503 = 1(主轴移动当前刀具坐标Y处...)
-G53 Y[#[1350+#1300-1]] F#1313 ;Y坐标处
+#1503 = 1(spindle moves to the current tool coordinate Y...)
+G53 Y[#[1350+#1300-1]] F#1313 ;Y coordinate
 
 
-M154 //主轴松刀
-G04 P100 //100ms 
-M301 //主轴松开检测
+M154 ;Spindle tool release
+G04 P100 ;100ms 
+M301 ;Spindle release detection
 
-#1503 = 1(主轴上抬到换刀上位处...)
-G53 Z#1306 F#1312 ;主轴上抬到换刀上位处
+#1503 = 1(spindle lifts to the upper position for tool change...)
+G53 Z#1306 F#1312 ;spindle lifts to the upper position for tool change
 
-#1503 = 1(主轴移动到目标刀具XY坐标...)
+#1503 = 1(spindle moves to the target tool XY coordinates...)
 G53 X[#[1330+#1-1]] Y[#[1350+#1-1]] F#1311 ;
 
 
-#1503 = 1(主轴移动到换刀下位...)
-//G53 Z#1307 F#1312 ;
-G53 Z[#[1370+#1-1]] F#1312 ;Z的每把刀换刀下位
+#1503 = 1(spindle moves to the lower position for tool change...)
+;G53 Z#1307 F#1312 ;
+G53 Z[#[1370+#1-1]] F#1312 ;each tool of Z changes to the lower position
 
 
-#1503 = 1(主轴紧刀)
-M155 //刀具锁紧
+#1503 = 1(spindle tool lock)
+M155 ;tool lock
 G04 P200
-M302 //刀具锁紧检测
+M302 ;tool lock detection
 
 
-#1503 = 1(主轴移动换刀前置点Y处...)
-G53 Y#1309 F#1313 ;主轴移动换刀前置点Y处
+#1503 = 1(spindle moves to tool change leading point Y...)
+G53 Y#1309 F#1313 ;spindle moves to tool change leading point Y
 
-#1503 = 1(主轴上抬到换刀上位处...)
-G53 Z#1306 F#1312 ;主轴上抬到换刀上位处
-GOTO5;固定直排换刀完成
+#1503 = 1(spindle lifts to tool change upper position...)
+G53 Z#1306 F#1312 ;spindle lifts to tool change upper position
+GOTO5;fixed straight tool change completed
 
 
-(---------------多工序换刀流程-----------------)
+(--------Multi-process tool change process---------)
 
 N25
-IF#1300 == 0 GOTO17;当前刀=0则只换刀动作
+IF#1300 == 0 GOTO17;If the current tool = 0, only tool change action
 IF #[1552+16-1]==0 GOTO45
 M5
 N45
-G53 Z#1306 F#1312 ;主轴上抬到换刀上位处
-M300 //主轴停止检测
+G53 Z#1306 F#1312 ;The spindle is lifted to the upper position of tool change
+M300 ;Spindle stop detection
 M169
 M171
 M173
 M175
 M141
-#1300 = 0 (空刀)
-IF #1!=0 GOTO51;(只卸刀退出)
+#1300 = 0 (empty tool)
+IF #1!=0 GOTO51;(Only unload the tool and exit)
 GOTO3
 N51
-IF #1!=0 GOTO17;目标刀换刀
+IF #1!=0 GOTO17;Target tool change
 
-(-----------多工序卸刀完成--------------)
+(--------Multi-process tool unloading completed--------)
 
 
 
-(---------------龙门架直排换刀流程-----------------)
+(-----Gantry direct tool change process-----)
 N22
 
 
-IF#1300 == 0 GOTO17;当前刀=0则只换刀动作
+IF#1300 == 0 GOTO17;If the current tool = 0, only tool change action
 
-#1503 = 1(龙门架直排换刀开始!)
+#1503 = 1(Gantry direct tool change starts!)
 
-M05  //主轴关
+M05  ;Spindle off
 
-M151 //除尘罩关闭
-M306 //除尘罩关闭检测
+M151 ;Dust cover closed
+M306 ;Dust cover closed detection
 
-#1503 = 1(主轴上抬到换刀上位处,速度:812号参数)
-G53 Z#1306 F#1312 ;主轴上抬到换刀上位处
+#1503 = 1(Spindle lifted to the upper position for tool change, speed: parameter 812)
+G53 Z#1306 F#1312 ;Spindle lifted to the upper position for tool change
 
-#1503 = 1(主轴移动当前刀具坐标X处,速度:811号参数)
-G53 X[#[1330+#1300-1]] F#1311 ;X坐标处
+#1503 = 1(Spindle moves to the current tool coordinate X, speed: parameter 811)
+G53 X[#[1330+#1300-1]] F#1311 ;X coordinate
 
-#1503 = 1(主轴移动到当前刀具坐标Z处,速度:819号参数)
+#1503 = 1(spindle moves to the current tool coordinate Z, speed: parameter 819)
 G53 Z[#[1370+#1300-1]] F#1319 ;
 
-M300 //主轴停止检测
-M152 //刀库打开
-M303 //刀库打开检测
+M300 ;spindle stop detection
+M152 ;tool magazine open
+M303 ;ool magazine open detection
 
-M154 //主轴松刀
-M301 //主轴松开检测
+M154 ;spindle tool release
+M301 ;spindle release detection
 
 #1300 = 0
 
-#1503 = 1(主轴上抬到换刀上位处,速度:812号参数)
-G53 Z#1306 F#1312 ;主轴上抬到换刀上位处
+#1503 = 1(spindle lifts to the tool change upper position, speed: parameter 812)
+G53 Z#1306 F#1312 ;spindle lifts to the tool change upper position
 
 
-IF #1!=0 GOTO41;(只卸刀退出)
-M153 //刀库关闭
-M304 //刀库关闭检测
+IF #1!=0 GOTO41;(only unload the tool and exit)
+M153 ;tool magazine closed
+M304 ;tool magazine closed detection
 GOTO3
 
 N41
-IF #1!=0 GOTO17;目标刀换刀
+IF #1!=0 GOTO17;target tool change
 
 
-(-----------卸刀完成--------------)
+(-------tool unloading completed------)
 
-(-----------多工序换刀------------)
+(--------tool change for multiple processes-------)
 
 N35
 
 IF #[1552+16-1]==0 GOTO55
 M5
 N55
-G53 Z#1306 F#1312 ;主轴上抬到换刀上位处
-M300 //主轴停止检测
+G53 Z#1306 F#1312 ;Spindle lifts to the upper position for tool change
+M300 ;Spindle stop detection
 M169
 M171
 M173
 M175
-M[168+[#1-1]*2] //打开气缸
+M[168+[#1-1]*2] ;Open the cylinder
 M141
 GOTO5;
-//多工序换刀完成
+;Multi-process tool change completed
 
 
 
 
-(-------龙门直排开始---------------)
+(-------Gantry straight row starts------)
 N32
 
-//M05  //主轴关
+;M05  ;Spindle off
 
-#1503 = 1(主轴上抬到换刀上位处,速度:812号参数)
-G53 Z#1306 F#1312 ;主轴上抬到换刀上位处
+#1503 = 1(spindle lifts to the upper position of tool change, speed: parameter 812)
+G53 Z#1306 F#1312 ;spindle lifts to the upper position of tool change
 
 
-M300 //主轴停止检测
+M300 ;spindle stop detection
 
-M151  //除尘罩关闭
-M306 //除尘罩关闭检测
+M151  ;dust cover closed
+M306 ;dust cover closed detection
 
-M154 //主轴松刀
-M301 //主轴松开检测
+M154 ;spindle tool release
+M301 ;spindle release detection
 
-#1503 = 1(主轴移动到目标刀具X坐标,速度:811号参数)
+#1503 = 1(spindle moves to the target tool X coordinate, speed: parameter 811)
 G53 X[#[1330+#1-1]] F#1311 ;
 
-M152  //刀库打开
-M303 //刀库打开检测
+M152  ;tool magazine open
+M303 ;tool magazine open detection
 
 
-#1503 = 1(主轴移动到目标刀具Z坐标,速度:812号参数)
+#1503 = 1(spindle moves to the target tool Z coordinate, speed: parameter 812)
 G53 Z[#[1370+#1-1]]+10 F#1319 ;
 G53 Z[#[1370+#1-1]] F1000 ;
 
 
 
-M155 //刀具锁紧
+M155 ;Tool locking
 G04 P#1314
-M302 //刀具锁紧检测
+M302 ;Tool locking detection
 
 #1300 = #1;
 
 
-M153 //刀库关闭
-M304 //刀库关闭检测
+M153 ;Tool magazine closed
+M304 ;Tool magazine closed detection
 
 
-#1503 = 1(主轴上抬到换刀上位处,速度:812号参数)
-G53 Z#1306 F#1312 ;主轴上抬到换刀上位处
+#1503 = 1(spindle lifted to the upper position for tool change, speed: parameter 812)
+G53 Z#1306 F#1312 ;Spindle lifted to the upper position for tool change
 
 
 
-GOTO5;龙门架直排换刀完成
+GOTO5;Gantry vertical tool change completed
 
-(-----------虚拟刀--------------)
+(-----------Virtual tool------------)
 N20
 
 
-IF#1300 == 0 GOTO17;当前刀=0则只换刀动作
+IF#1300 == 0 GOTO17;If the current tool = 0, only tool change action
 
-IF #1303==0 GOTO4; 	虚拟刀不支持
+IF #1303==0 GOTO4; 	Virtual tool is not supported
 
-#1503 = 1(当前虚拟刀卸刀!)
+#1503 = 1(Current virtual tool unloads!)
 
-#1503 = 1(主轴移动到手动卸刀位,速度:811号参数)
+#1503 = 1(Spindle moves to manual tool unload position, speed: parameter 811)
 G53 Z#1318 F#1311 ;
 G90 G53 X#1316 Y#1317 F#1311
 
-M155 //刀具锁紧
-WHILE [#[1520+#1099-1] NE 0] DO14;等待外部启动按钮
+M155 ;Tool lock
+WHILE [#[1520+#1099-1] NE 0] DO14;Wait for external start button
 #1510=#1300
-#1503 = 1(请手动卸下虚拟刀号[%.0f]后,按外部启动键继续!)
+#1503 = 1(Please manually unload the virtual tool number [%.0f], and press the external start button to continue!)
 G04 P1
 END14
 
-WHILE [#[1520+#1099-1] NE 1] DO15;等待外部启动松开
+WHILE [#[1520+#1099-1] NE 1] DO15;Wait for external start to release
 #1510=#1
-#1503 = 1(请手动更换虚拟刀号[T%.0f]后,松开外部启动键进行自动对刀!)
+#1503 = 1(Please manually change the virtual tool number [T%.0f], and then release the external start key to automatically calibrate the tool!)
 G04 P1
 END15
 
 #1300 = 0
-IF #1==0 GOTO6;(只卸刀退出)
-IF #1!=0 GOTO17;目标刀换刀
+IF #1==0 GOTO6;(Only unload the tool and exit)
+IF #1!=0 GOTO17;Change the target tool
 
-(-----------卸刀完成------------)
+(---------unload the tool completed-------)
 
 
 
-(----虚拟换刀-----)
+(----Virtual tool change----)
 N30
 
 IF #1303==0 GOTO4; 	虚拟刀不支持
 
-M153 //刀库关闭
-M304 //刀库关闭检测
+M153 ;Tool magazine closed
+M304 ;Tool magazine closed detection
 
-#1503 = 1(虚拟刀换刀!)
+#1503 = 1(Virtual tool change!)
 
-#1503 = 1(主轴移动到手动换刀位,速度:811号参数)
+#1503 = 1(Spindle moves to manual tool change position, speed: parameter 811)
 G53 Z#1318 F#1311 ;
 G90 G53 X#1316 Y#1317 F#1311
 
-M155 //刀具锁紧
+M155 ;Tool locking
 
 
-WHILE [#[1520+#1099-1] NE 0] DO13;等待外部启动按钮
+WHILE [#[1520+#1099-1] NE 0] DO13;Wait for external start button
 #1510=#1
-#1503 = 1(请手动更换虚拟刀号[T%.0f]后,按外部启动键进行自动对刀!)
+#1503 = 1(Please manually change the virtual tool number [T%.0f], and then press the external start button for automatic tool setting!)
 G04 P1
 END13
 
-WHILE [#[1520+#1099-1] NE 1] DO16;等待外部启动松开
+WHILE [#[1520+#1099-1] NE 1] DO16;Wait for external start to release
 #1510=#1
-#1503 = 1(请手动更换虚拟刀号[T%.0f]后,松开外部启动键进行自动对刀!)
+#1503 = 1(Please manually change the virtual tool number [T%.0f], and then release the external start key to automatically calibrate the tool!)
 G04 P1
 END16
 
-
-
-GOTO5;虚拟完成
-
-
- 
-
+GOTO5;Virtual Completion
 
 N5
-#1300 = #1;更新目标刀号
-
-IF #1305==0 GOTO6; 换刀后自动对刀无效
-
-#1503 = 1(自动对刀中...!)
-#1502=2; 第二次固定对刀
+#1300 = #1;Update target tool number
+IF #1305==0 GOTO6; Automatic tool setting is invalid after tool change
+#1503 = 1(automatic tool setting...!)
+#1502=2; Second fixed tool setting
 M98P502
 
 N6
-IF #1315==0 GOTO3; 判断是否需要回加工换刀机械位置
-
-#1503 = 1(主轴上抬到换刀上位处,速度:811号参数)
-G53 Z#1306 F#1312 ;主轴上抬到换刀上位处
-#1503 = 1(回换刀前XY机械位置,速度:812号参数)
+IF #1315==0 GOTO3; Determine whether it is necessary to return to the mechanical position of tool change
+#1503 = 1(spindle lifts to the upper position of tool change, speed: parameter 811)
+G53 Z#1306 F#1312 ;spindle lifts to the upper position of tool change
+#1503 = 1(回换刀前XY机械位置,速度:return to the XY mechanical position before tool change, speed: parameter 812)
 G90 G53 X#2 Y#3  F#1311
 
-
-
-
 N3 
-#1300 = #1;更新目标刀号
-
+#1300 = #1;Update target tool number
 IF #1993==1 GOTO4;
 M150
 
-
 N4
-#1514 = 0//暂停标志
-#1503 = 1000 //清除辅助显示
+#1514 = 0;Pause flag
+#1503 = 1000 ;Clear auxiliary display
 M99
