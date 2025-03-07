@@ -641,7 +641,7 @@ IF #1300==#1 GOTO4; 目标刀具与当前刀具相同退出
 IF #720 == 0 GOTO50;
 (各轴回零标志判断)
 IF [#1515+#1516+#1517]>=3 GOTO50;
-#1503 = 1(X.Y,Z轴机械未全部归零!)
+#1503 = 1(X,Y,Z are not fully homed!)
 G04 P10
 GOTO4 ;结束
 
@@ -656,19 +656,18 @@ M155 //刀具锁紧
 
 
 (初始入口)
-IF #1300>#1301 GOTO20;(虚拟刀动作)
-
+IF #1300>#1301 GOTO20;(manual tool removal)
 IF #1302==1 GOTO25; 	多工序
 IF #1302==2 GOTO22; 	龙门架直排
 IF #1302==3 GOTO23; 	固定直排
-IF #1302==4 GOTO4; 	圆盘刀库
+IF #1302==4 GOTO4; 	disk tool unload
 
 N17; 只换刀
-IF #1>#1301 GOTO30;
+IF #1>#1301 GOTO30;  	manual tool load
 IF #1302==1 GOTO35; 	多工序
 IF #1302==2 GOTO32; 	龙门架直排
 IF #1302==3 GOTO33; 	固定直排
-IF #1302==4 GOTO4; 	圆盘刀库
+IF #1302==4 GOTO4; 	disk tool load
 
 
 
