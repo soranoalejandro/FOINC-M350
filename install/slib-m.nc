@@ -2244,6 +2244,12 @@ WHILE [#[1520+#4-1] != #6] DO1
 #1503 = 1(Tool locked detection.. [IN%.0f])
 G04 P10
 END1
+G04 P500
+WHILE [#[1520+#4-1] != #6] DO2   
+#1510 = #4
+#1503 = 1(Tool locked detection.. [IN%.0f])
+G04 P10
+END2
 N30
 M99
 
