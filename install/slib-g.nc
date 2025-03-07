@@ -633,7 +633,7 @@ O20000(换刀程序)
 #5 = #883
 #1514 = 1  //
 
-IF #1300>[#1301+20] GOTO4; 大于虚拟和实际
+// IF #1300>[#1301+20] GOTO4; 大于虚拟和实际
 IF #1>[#1301+20] GOTO4; 大于虚拟和实际
 IF #1302==0 GOTO4; 	无刀库退出
 IF #1300==#1 GOTO4; 目标刀具与当前刀具相同退出
@@ -885,15 +885,18 @@ G90 G53 X#1316 Y#1317 F#1311
 M155 //刀具锁紧
 WHILE [#[1520+#1099-1] NE 0] DO14;等待外部启动按钮
 #1510=#1300
-#1503 = 1(请手动卸下虚拟刀号[%.0f]后,按外部启动键继续!)
-G04 P1
+#1503 = 1(manually remove the tool[T%.0f], and press the external start key..)
+G04 P10
 END14
-
+M154
+G04 P100
 WHILE [#[1520+#1099-1] NE 1] DO15;等待外部启动松开
 #1510=#1
-#1503 = 1(请手动更换虚拟刀号[T%.0f]后,松开外部启动键进行自动对刀!)
-G04 P1
+#1503 = 1(manually change the tool[T%.0f], and release the external start key..)
+G04 P10
 END15
+M155
+G04 P100
 
 #1300 = 0
 IF #1==0 GOTO6;(只卸刀退出)
@@ -922,15 +925,18 @@ M155 //刀具锁紧
 
 WHILE [#[1520+#1099-1] NE 0] DO13;等待外部启动按钮
 #1510=#1
-#1503 = 1(请手动更换虚拟刀号[T%.0f]后,按外部启动键进行自动对刀!)
-G04 P1
+#1503 = 1(manually change the tool[T%.0f], and press the external start key..)
+G04 P10
 END13
-
+M154
+G04 P100
 WHILE [#[1520+#1099-1] NE 1] DO16;等待外部启动松开
 #1510=#1
-#1503 = 1(请手动更换虚拟刀号[T%.0f]后,松开外部启动键进行自动对刀!)
-G04 P1
+#1503 = 1(manually change the tool[T%.0f], and release the external start key..)
+G04 P10
 END16
+M155
+G04 P100
 
 
 
