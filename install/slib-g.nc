@@ -656,6 +656,8 @@ M155 //刀具锁紧
 
 
 (初始入口)
+IF #1302==4 GOTO60; 	disk tool unload and load
+
 IF #1300>#1301 GOTO20;(manual tool removal)
 IF #1302==1 GOTO25; 	多工序
 IF #1302==2 GOTO22; 	龙门架直排
@@ -942,7 +944,68 @@ G04 P100
 GOTO5;虚拟完成
 
 
- 
+N60 (-----disc tool removal-----)
+M5 ; stop spindle
+M151 ; dust cover - retreat
+M153 ; disk magazine - retreat
+M155 ; tool locked signal at start
+M157 ; retreat main tool
+M306 ; dust cover retreated
+M304 ; disk magazine retreated
+
+(determine tool recovery and delivery positions)
+
+#7 = [#1301+1] ; number of slots in the disk, capacity plus 1 because slot 0 is used to manually remove tools.
+#8 = 0 ; tool recovery position, 0 for tools above capacity
+#9 = 0 ; tool delivery position, 0 for tools above capacity
+IF #1300 > #1301 GOTO61
+#8 = [360 * #1300 / #7] ; position = 360 degrees * tool number / total disk slots
+N61
+IF #1 > #1301 GOTO62
+#9 = [360 * #1 / #7] ; position = 360 degrees * tool number / total disk slots
+N62
+
+(tool recovery position)
+M50 ; tool air blower
+G53 G90 C#8
+M160 ; push cylinder
+G4 P1400 ; M332 - push cylinder extended
+M152 ; extend disk magazine
+M303 ; disk magazine extended
+M154 ; tool release
+M301 ; tool release detection
+G4 P220
+M161 ; retreat push cylinder
+G4 P1400 ; M333 - push cylinder retreated
+(update tool number to T0, no tool)
+#1300 = 0
+
+(recovered tool is virtual)
+
+(target tool is virtual)
+
+(target tool is T0, no tool)
+
+(tool delivery position)
+G53 G90 C#9
+M160 ; push cylinder
+G4 P1400 ; M332 - push cylinder extended
+M155 ; restore tool lock state
+G4 P1800 ; M302 - tool locked detection
+(update tool number)
+#1300 = #1
+
+M51  ; turn off tool air blower
+M153 ; retract disk magazine
+M304 ; disk magazine retracted
+M161 ; retreat push cylinder
+G4 P1400 ; M333 - push cylinder retreated
+
+(exit sequence)
+M156 ; restore main tool to lower position (work position)
+G4 P2000
+
+GOTO4 ; end
 
 
 N5
