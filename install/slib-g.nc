@@ -954,10 +954,15 @@ M306 ; dust cover retreated
 M304 ; disk magazine retreated
 
 (determine tool recover position)
+#8 = 0 ; for tools above capacity
+#9 = [#1301+1] ; number of slots in the disk, capacity plus 1 because slot 0 is used to manually remove tools.
+IF #1300 > #1301 GOTO61
+#8 = [360 * #1300 / #9] ; position = 360 degrees * tool number / total disk slots
+N61
 
 M50 ; tool air blower
-G53 G90 C72
-M51
+G53 G90 C#8
+;M51
 
 M160 ; push cylinder
 G4 P1400 ; M332 - push cylinder extended
@@ -968,6 +973,7 @@ M301 ; tool release detection
 M161 ; retreat push cylinder
 G4 P1400 ; M333 - push cylinder retreated
 M155 ; restore tool lock state
+M51  ; turn off tool air blower
 M153 ; retract disk magazine
 M304 ; disk magazine retracted
 
@@ -978,13 +984,17 @@ M304 ; disk magazine retracted
 
 (load target tool)
 
-(if tool larger than capaity: load via slot '0', virtual tool)
+(if tool larger than capacity: load via slot '0', virtual tool)
 
 (determine tool delivery position)
 
 M50 ; tool air blower
 G53 G90 C144
 M51
+
+G4 P2000
+
+(load the tool)
 
 G4 P2000
 
