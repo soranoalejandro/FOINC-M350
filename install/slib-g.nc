@@ -987,12 +987,18 @@ M304 ; disk magazine retracted
 (if tool larger than capacity: load via slot '0', virtual tool)
 
 (determine tool delivery position)
+#8 = 0 ; for tools above capacity
+// #9 = [#1301+1] ; number of slots in the disk, capacity plus 1 because slot 0 is used to manually remove tools.
+IF #1 > #1301 GOTO62
+#8 = [360 * #1 / #9] ; position = 360 degrees * tool number / total disk slots
+N62
 
 M50 ; tool air blower
-G53 G90 C144
-M51
+G53 G90 C#8
+;M51
 
 G4 P2000
+M51
 
 (load the tool)
 
