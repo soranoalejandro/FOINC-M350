@@ -970,9 +970,11 @@ M152 ; extend disk magazine
 M303 ; disk magazine extended
 M154 ; tool release
 M301 ; tool release detection
+G4 P220
 M161 ; retreat push cylinder
 G4 P1400 ; M333 - push cylinder retreated
 M155 ; restore tool lock state
+G4 P220
 M51  ; turn off tool air blower
 M153 ; retract disk magazine
 M304 ; disk magazine retracted
@@ -997,15 +999,25 @@ M50 ; tool air blower
 G53 G90 C#8
 ;M51
 
-G4 P2000
-M51
-
 (load the tool)
-
-G4 P2000
+M152 ; extend disk magazine
+M303 ; disk magazine extended
+M154 ; tool release
+M301 ; tool release detection
+G4 P220
+M160 ; push cylinder
+G4 P1400 ; M332 - push cylinder extended
+M155 ; restore tool lock state
+G4 P1800 ; M302 - tool locked detection
 
 (update tool number)
 #1300 = #1
+
+M51  ; turn off tool air blower
+M153 ; retract disk magazine
+M304 ; disk magazine retracted
+M161 ; retreat push cylinder
+G4 P1400 ; M333 - push cylinder retreated
 
 (exit sequence)
 M156 ; restore main tool to lower position (work position)
