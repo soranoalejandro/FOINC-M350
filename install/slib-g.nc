@@ -945,40 +945,39 @@ GOTO5;ÐéÄâÍê³É
 
 
 N60 (-----disc tool removal-----)
-M5 ; stop spindle
 M151 ; dust cover - retreat
 M153 ; disk magazine - retreat
-M155 ; tool locked signal at start
+M155 ; tool lock default position
+M160 ; push cylinder default position
 M157 ; retreat main tool
+M5 ; stop spindle
 M306 ; dust cover retreated
 M304 ; disk magazine retreated
+;M300 ; spindle stopped detection
 
 (determine tool recovery and delivery positions)
-
 #7 = [#1301+1] ; number of slots in the disk, capacity plus 1 because slot 0 is used to manually remove tools.
 #8 = 0 ; tool recovery position, 0 for tools above capacity
 #9 = 0 ; tool delivery position, 0 for tools above capacity
-IF #1300 > #1301 GOTO61
-#8 = [360 * #1300 / #7] ; position = 360 degrees * tool number / total disk slots
+IF #1300 > #1301 GOTO61 ; #1300 is current tool
+#8 = [360 * #1300 / #7] ; recovery position = 360 degrees * tool number / total disk slots
 N61
-IF #1 > #1301 GOTO62
-#9 = [360 * #1 / #7] ; position = 360 degrees * tool number / total disk slots
+IF #1 > #1301 GOTO62 ; #1 is target tool
+#9 = [360 * #1 / #7] ; delivery position = 360 degrees * tool number / total disk slots
 N62
 
 (tool recovery position)
 M50 ; tool air blower
 G53 G90 C#8
-M160 ; push cylinder
-G4 P1400 ; M332 - push cylinder extended
 M152 ; extend disk magazine
 M303 ; disk magazine extended
 M154 ; tool release
 M301 ; tool release detection
-G4 P220
 M161 ; retreat push cylinder
 G4 P1400 ; M333 - push cylinder retreated
 (update tool number to T0, no tool)
 #1300 = 0
+G49 (remove tool height compensation)
 
 (recovered tool is virtual)
 
@@ -990,20 +989,20 @@ G4 P1400 ; M333 - push cylinder retreated
 G53 G90 C#9
 M160 ; push cylinder
 G4 P1400 ; M332 - push cylinder extended
-M155 ; restore tool lock state
-G4 P1800 ; M302 - tool locked detection
+M155 ; tool lock
+M302 ; tool locked detection
+G4 P200
 (update tool number)
 #1300 = #1
+G43 H[#1] (tool height compensation)
 
-M51  ; turn off tool air blower
 M153 ; retract disk magazine
 M304 ; disk magazine retracted
-M161 ; retreat push cylinder
-G4 P1400 ; M333 - push cylinder retreated
+M51  ; turn off tool air blower
 
 (exit sequence)
 M156 ; restore main tool to lower position (work position)
-G4 P2000
+G4 P1000
 
 GOTO4 ; end
 
