@@ -2228,7 +2228,11 @@ WHILE [#[1520+#4-1] != #6] DO1
 #1503 = 1(Tool release detection.. [IN%.0f])
 G04 P10
 END1 
+G4 P100
+GOTO40
 N30
+G4 P1400 (use a fixed delay of 1.4 seconds in case there is no sensor enabled)
+N40
 M99
 
 
@@ -2244,13 +2248,16 @@ WHILE [#[1520+#4-1] != #6] DO1
 #1503 = 1(Tool locked detection.. [IN%.0f])
 G04 P10
 END1
-G04 P500
+G04 P400 (repeat the check after 0.4 seconds to avoid a false signal)
 WHILE [#[1520+#4-1] != #6] DO2   
 #1510 = #4
 #1503 = 1(Tool locked detection.. [IN%.0f])
 G04 P10
 END2
+GOTO40
 N30
+G4 P1000 (use a fixed delay of 1.0 seconds in case there is no sensor enabled)
+N40
 M99
 
 // M303 µ¶¾ß´ò¿ª¼ì²â
