@@ -1,15 +1,15 @@
 && 
   
-#0 -p0 -a3 -a3 -t1 -s1"Motor starting speed" -s2"mm/min" -m1 -min=1.000 -max=999.000
+#0 -p0 -a3 -a3 -t1 -s1"T·ªëc ƒë·ªô kh·ªüi ƒë·ªông ƒë·ªông c∆°" -s2"mm/min" -m1 -min=1.000 -max=999.000
 -s3"If the given speed is higher than this speed, the motor will start to acc/from this speed; otherwise the motor will run at the given speed./Effective range:[1-999]"
 
-#1 -p0 -a3 -t1 -s1"X-axis pulses per mm" -s2" pulse/mm" -m1 -min=50.000 -max=99999.000
+#1 -p0 -a3 -t1 -s1"‡∏à‡∏≥‡∏ô‡∏ß‡∏ô‡∏û‡∏±‡∏•‡∏™‡πå‡∏ï‡πà‡∏≠‡∏°‡∏¥‡∏•‡∏•‡∏¥‡πÄ‡∏°‡∏ï‡∏£‡πÅ‡∏Å‡∏ô X" -s2" pulse/mm" -m1 -min=50.000 -max=99999.000
 -s3"Note: When the axis is used to drive the spindle, the unit of this /parameter is the number of pulses per revolution./Effective range:[50-99999]"
-#2 -p0 -a3 -t1 -s1"Y-axis pulses per mm" -s2" pulse/mm" -m1 -min=50.000 -max=99999.000
+#2 -p0 -a3 -t1 -s1"YÏ∂ï Î∞ÄÎ¶¨ÎØ∏ÌÑ∞Îãπ ÌéÑÏä§ Ïàò" -s2" pulse/mm" -m1 -min=50.000 -max=99999.000
 -s3"Note: When the axis is used to drive the spindle, the unit of this /parameter is the number of pulses per revolution./Effective range:[50-99999]"
-#3 -p0 -a3 -t1 -s1"Z-axis pulses per mm" -s2" pulse/mm" -m1 -min=50.000 -max=99999.000
+#3 -p0 -a3 -t1 -s1"Œ†Œ±ŒªŒºŒøŒØ Œ±ŒΩŒ¨ œáŒπŒªŒπŒøœÉœÑœå œÉœÑŒøŒΩ Œ¨ŒæŒøŒΩŒ± Z" -s2" pulse/mm" -m1 -min=50.000 -max=99999.000
 -s3"Note: When the axis is used to drive the spindle, the unit of this /parameter is the number of pulses per revolution./Effective range:[50-99999]"
-#6 -p0 -a4 -t1 -s1"4th-axis pulses per unit" -s2"" -m1 -min=50.000 -max=999999.000
+#6 -p0 -a4 -t1 -s1"Pulsos por mm no eixo A" -s2"" -m1 -min=50.000 -max=999999.000
 -s3"Note: When the axis is used to drive the spindle, the unit of this /parameter is the number of pulses per revolution./Effective range:[50-999999]"
 #7 -p0 -a4 -t2 -s1"4th-axis unit" -m1 -min=0.000 -max=1.000 -i0"pulse/deg" -i1"pulse/circle"
 -s3"Note: When this axis is used to drive the spindle, set this parameter/to 0!"
@@ -208,7 +208,7 @@
 #70 -p0 -a3  -t1 -s1"Z lift distance. when paused" -s2"mm" -m3 -min=0.000 -max=99.000
 -s3"Z lift distance. when paused."
 
-#71 -p0 -a3 =0  -t2 -s1"G0∂Œ‘À∂ØπÊªÆ πƒ‹"  -m0 -min=0.000 -max=1.000 -i0"Ω˚÷π" -i1" πƒ‹"
+#71 -p0 -a3 =0  -t2 -s1"G0    "  -m0 -min=0.000 -max=1.000 -i0"  " -i1"  "
 #72 =0 -p0 -a3 -t2 -s1"G0 command motion characteristics" -m0 -min=0.000 -max=1.000 -i0"Interpolation" -i1"Independent"
 -s3"Interpolation:synergistic movement of each axis./Independent:each axis independently moves at G0 speed."
 
@@ -459,8 +459,8 @@
 -s3"The initial down speed of the Z axis after starting the tool setting."
 #133 -p0 -a3  -t1 -s1"Probe Tool block thickness" -s2"mm" -m0 -min=-99.000 -max=99.000
 -s3"Useful for floating tool."
-#134 -p0 -a3  -t2 -s1"∂‘µ∂≥ı ºŒª÷√" -m0 -min=0.000 -max=1.000 -i0"µ±«∞Œª÷√" -i1"πÃ∂®Œª÷√"
--s3"∂‘µ∂≥ı ºŒª÷√…Ë÷√Œ™µ±«∞Œª÷√,‘Ú∆Ù∂Ø∂‘µ∂≤Ÿ◊˜∫Û,Z÷·÷±Ω”Ω¯––ÃΩ≤‚./∑Ò‘Ú,ª˙¥≤“∆∂ØµΩ‘§œ»…Ë÷√µƒŒª÷√∫Û,Z÷·‘ŸΩ¯––ÃΩ≤‚."
+#134 -p0 -a3  -t2 -s1"    " -m0 -min=0.000 -max=1.000 -i0"   " -i1"   "
+-s3"    "
 #135 -p0 -a3  -t1 -s1"Fixed probe X mach pos" -s2"mm" -m8 -min=-9999.000 -max=9999.000
 -s3"Starting to search for a mechanical location."
 #136 -p0 -a3  -t1 -s1"Fixed probe Y mach pos" -s2"mm" -m8 -min=-9999.000 -max=9999.000
@@ -477,7 +477,6 @@
 
 #141 -p0 -a3  -t1 -s1"Z safety height before tool setting(mach)" -s2"mm" -m8 -min=-9999 -max=9999.000
 -s3"  "
-
 #149 -p0 -a3 -t2 -s1"Files soring method" -m0 -min=0.000 -max=2.000 -i0"NAME" -i1"EXT" -i2"DATE"
 #150 -p0 -a3 -t2 -s1"Stop mode when X-axis hard limit trigger" -m9 -min=0.000 -max=1.000 -i0"Deceleration" -i1"Emergency"
 #151 -p0 -a3 -t2 -s1"Stop mode when Y-axis hard limit trigger" -m9 -min=0.000 -max=1.000 -i0"Deceleration" -i1"Emergency"
@@ -880,10 +879,10 @@
 
 #999 =0 -p0 -a3 -t2 -s1"coordinate offset method" -m14 -min=0.000 -max=2.000 -i0"standard " -i1"tool offset" -i2"other"
 
-#240 -p0 -a3  -t2 -s1"Language" -s3"0:Eng,1:÷–Œƒ,2:ß≤ßÂß„,3:Other" -m15 -min=0.000 -max=3.000 -i0"Eng" -i1"÷–Œƒ" -i2"ß≤ßÂß„"  -i3"Other"
+#240 -p0 -a3  -t2 -s1"Language"  -m15 -min=0.000 -max=3.000 -i0"Eng" -i1"‰∏≠Êñá" -i2"–†—É—Å" -i3"Other"
 -s3"Reboot to take effect."
 #241 -p0 -a3  -t2 -s1"Enable buzzer feedback" -m15 -min=0.000 -max=1.000 -i0"No" -i1"Yes"
-#242 -p0 -a3  -t2 -s1"÷˜ΩÁ√Êœ‘ æ∑Ω∞∏" -m0 -min=0.000 -max=2.000 -i0"∑Ω∞∏1" -i1"∑Ω∞∏2" -i2"∑Ω∞∏3"
+#242 -p0 -a3  -t2 -s1"1234" -m0 -min=0.000 -max=2.000 -i0"    1" -i1"    2" -i2"    3"
 #244 -p0 -a3  -t2 -s1"Enable realtime toolpath" -m15 -min=0.000 -max=1.000 -i0"No" -i1"Yes"
 #245 -p0 -a3  -t2 -s1"Toolpath mode" -m15 -min=0.000 -max=2.000 -i0"Statue" -i1"Line" -i2"3D"
 #246=600 -p0 -a3  -t0 -s1"Max. polyline segments" -m0 -min=100.000 -max=3600.000
@@ -921,21 +920,21 @@
 #297 -p1 -a3 -t2 -s1"Serial 2 Stop bits" -m15 -min=0.000 -max=1 -i0"1" -i1"2"
 -s3"Restart takes effect"
 
-#270 = 888888 -p0 -a3  -t0 -s1"”√ªß»®œﬁ√‹≥◊" -m0 -min=0.000 -max=999999.000
-#249 =4 -p0 -a3  -t0=4.000 -s1"J≤Œ ˝Ã›∂»" -m0 -min=2.000 -max=512.000
+#270 = 888888 -p0 -a3  -t0 -s1"   " -m0 -min=0.000 -max=999999.000
+#249 =4 -p0 -a3  -t0=4.000 -s1"   " -m0 -min=2.000 -max=512.000
 #250 -p0 -a3  -t1=0.000 -s1"Maximum machining contour error" -s2"mm" -m0 -min=0.000 -max=0.100
 #271 =0 -p0 -a3  -t1  -s1"Maximum  contour " -s2"mm" -m0 -min=0.000 -max=0.100
 
 
 
 
-#254 -p0 -a3  -t1=200.0 -s1"µ∂πÏøÌ∂»" -m0 -min=0.000 -max=999.999
-#255 -p0 -a3  -t1=200.0 -s1"µ∂πÏ∏ﬂ∂»" -m0 -min=0.000 -max=999.999
-#256 -p0 -a3  -t1=3.0 -s1"µ∂πÏ∫Ò∂»" -m0 -min=0.000 -max=999.999
-#257 -p0 -a3  -t1=3.0 -s1"µÒœÒƒ£ Ωœ¬µ∂πÏª≠∞Â∫Ò∂»" -m0 -min=0.000 -max=999.999
-#258 -p0 -a3  -t1=100.0 -s1"ª≠∞Â‘≠µ„X÷·Œª÷√" -m0 -min=0.000 -max=999.999
-#259 -p0 -a3  -t1=100.0 -s1"ª≠∞Â‘≠µ„Y÷·Œª÷√" -m0 -min=0.000 -max=999.999
-#260 -p0 -a3  -t1=3.0 -s1"ª≠∞Â‘≠µ„Z÷·Œª÷√" -m0 -min=0.000 -max=999.999
+#254 -p0 -a3  -t1=200.0 -s1"  " -m0 -min=0.000 -max=999.999
+#255 -p0 -a3  -t1=200.0 -s1" " -m0 -min=0.000 -max=999.999
+#256 -p0 -a3  -t1=3.0 -s1"  " -m0 -min=0.000 -max=999.999
+#257 -p0 -a3  -t1=3.0 -s1"   " -m0 -min=0.000 -max=999.999
+#258 -p0 -a3  -t1=100.0 -s1"  " -m0 -min=0.000 -max=999.999
+#259 -p0 -a3  -t1=100.0 -s1"   " -m0 -min=0.000 -max=999.999
+#260 -p0 -a3  -t1=3.0 -s1"   " -m0 -min=0.000 -max=999.999
 #261 =0 -p0 -a3  -t1 -s1"X-axis rotation angle in 3D toolpath mode" -s2"deg" -m0 -min=-180.000 -max=180.0
 #262 =0 -p0 -a3  -t1 -s1"Y-axis rotation angle in 3D toolpath mode" -s2"deg" -m0 -min=-180.000 -max=180.0
 #263 =0 -p0 -a3  -t1 -s1"Z-axis rotation angle in 3D toolpath mode" -s2"deg" -m0 -min=-180.000 -max=180.0
@@ -1063,8 +1062,8 @@
 
 #968 -p0 -a3  -t0 -s1"NC file index No." -s2"camxx.nc" -m18 -min=0 -max=9999
 -s3"0-9999:cam0-cam9999.nc"
-#969 -p0 -a3  -t0 -s1"◊‘∂®“ÂG¥˙¬Î∫≈" -s2"Gxx" -m0 -min=100 -max=200
--s3"100-199: ∂‘”¶G100-G199; 200:∑«∫Í±‡≥Ã∑Ω Ω."
+#969 -p0 -a3  -t0 -s1"   " -s2"Gxx" -m0 -min=100 -max=200
+-s3"100-199:      ."
 
 
 
