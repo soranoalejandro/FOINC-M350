@@ -633,12 +633,10 @@ IF #1302==0 GOTO4; 	无刀库退出 - No tool magazine
 IF #1300==#1 GOTO4; 目标刀具与当前刀具相同退出 - target tool same as current tool
 
 IF #720 == 0 GOTO50;
-(各轴回零标志判断 Check if X Y Z are homed)
-; IF [#1515+#1516+#1517]>=3 GOTO50;
 (各轴回零标志判断 Check if Z C are homed)
 IF [#1517 + #1519] >= 2 GOTO50;
 #1503 = 1(Z,C are not fully homed!)
-G04 P1000
+G04 P2000
 GOTO4 ;结束
 
 N50
@@ -955,7 +953,7 @@ N62
 (Z compensation of retrieved tool)
 IF #1300<1 GOTO64
 IF #1300>[#1301 + 20] GOTO64
-IF #1300>[#1301] GOTO63
+IF #1300 > #1301 GOTO63
 ; Tool number inside magazine capacity
 #12 = [#12 - #[900 + #1300 -1]]
 GOTO64
@@ -990,8 +988,28 @@ G4 P1400 ; M333 - push cylinder retreated
 ; G49 (remove tool height compensation)
 
 (recovered tool is virtual)
+IF #1300 <= #1301 GOTO71
+G53 G90 C180
+WHILE [#[1520+#1099-1] NE 0] DO72
+#1510=#1
+#1503 = 1(remove the tool[T%.0f], and press the external start key..)
+G04 P20
+END72
+#1503 = 1000; clear the display
+G04 P3200
+N71
 
 (target tool is virtual)
+IF #1 <= #1301 GOTO73
+G53 G90 C180
+WHILE [#[1520+#1099-1] NE 0] DO74
+#1510=#1
+#1503 = 1(load the tool[T%.0f], and press the external start key..)
+G04 P20
+END74
+#1503 = 1000; clear the display
+G04 P3200
+N73
 
 (target tool is T0, no tool)
 
@@ -1018,7 +1036,14 @@ IF #1305==0 GOTO68;
 #1510 = #12
 #1503 = 1(total Z compensation [Z%.1f])
 G53 G90 Z[#4 + #12] F#1312
-G4 P1000
+; change G54 to G49 offsets
+#807 = [#807 + #12]
+#812 = [#812 + #12]
+#817 = [#817 + #12]
+#822 = [#822 + #12]
+#827 = [#827 + #12]
+#832 = [#832 + #12]
+G4 P2000
 N68
 
 M156 ; restore main tool to lower position (work position)
