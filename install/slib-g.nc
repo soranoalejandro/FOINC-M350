@@ -625,18 +625,20 @@ O20000(换刀程序)
 #3 = #881
 #4 = #882
 #5 = #883
-#1514 = 1  //
+#1514 = 1  // Pause signal
 
-// IF #1300>[#1301+20] GOTO4; 大于虚拟和实际
-IF #1>[#1301+20] GOTO4; 大于虚拟和实际
-IF #1302==0 GOTO4; 	无刀库退出
-IF #1300==#1 GOTO4; 目标刀具与当前刀具相同退出
+// IF #1300>[#1301+20] GOTO4; 大于虚拟和实际 - greater than capacity + virtual
+IF #1>[#1301+20] GOTO4; 大于虚拟和实际 - greater than capacity + virtual
+IF #1302==0 GOTO4; 	无刀库退出 - No tool magazine
+IF #1300==#1 GOTO4; 目标刀具与当前刀具相同退出 - target tool same as current tool
 
 IF #720 == 0 GOTO50;
-(各轴回零标志判断)
-IF [#1515+#1516+#1517]>=3 GOTO50;
-#1503 = 1(X,Y,Z are not fully homed!)
-G04 P10
+(各轴回零标志判断 Check if X Y Z are homed)
+; IF [#1515+#1516+#1517]>=3 GOTO50;
+(各轴回零标志判断 Check if Z C are homed)
+IF [#1517 + #1519] >= 2 GOTO50;
+#1503 = 1(Z,C are not fully homed!)
+G04 P1000
 GOTO4 ;结束
 
 N50
@@ -644,9 +646,9 @@ N50
 
 
 
-M151 //除尘罩关闭
-M153 //刀库关闭
-M155 //刀具锁紧
+M151 //除尘罩关闭 Dust cover - retract
+M153 //刀库关闭 Disk magazine - retract
+M155 //刀具锁紧 Tool lock
 
 
 (初始入口)
@@ -942,12 +944,37 @@ M304 ; disk magazine retreated
 #7 = [#1301+1] ; number of slots in the disk, capacity plus 1 because slot 0 is used to manually remove tools.
 #8 = 0 ; tool recovery position, 0 for tools above capacity
 #9 = 0 ; tool delivery position, 0 for tools above capacity
-IF #1300 > #1301 GOTO61 ; #1300 is current tool
+IF #1300 > #1301 GOTO61 ; current tool > capacity
 #8 = [360 * #1300 / #7] ; recovery position = 360 degrees * tool number / total disk slots
 N61
-IF #1 > #1301 GOTO62 ; #1 is target tool
+IF #1 > #1301 GOTO62 ; target tool > capacity
 #9 = [360 * #1 / #7] ; delivery position = 360 degrees * tool number / total disk slots
 N62
+#12 = 0 ; total Z compensation after tool change
+
+(Z compensation of retrieved tool)
+IF #1300<1 GOTO64
+IF #1300>[#1301 + 20] GOTO64
+IF #1300>[#1301] GOTO63
+; Tool number inside magazine capacity
+#12 = [#12 - #[900 + #1300 -1]]
+GOTO64
+N63
+; Virtual tool 1 to 20
+#12 = [#12 - #[1473 + #1300 - #1301 -1]]
+N64
+
+(Z compensation of delivered tool)
+IF #1<1 GOTO66
+IF #1>[#1301 + 20] GOTO66
+IF #1>[#1301] GOTO65
+; Tool number inside magazine capacity
+#12 = [#12 + #[900 + #1 -1]]
+GOTO66
+N65
+; Virtual tool 1 to 20
+#12 = [#12 + #[1473 + #1 - #1301 -1]]
+N66
 
 (tool recovery position)
 M50 ; tool air blower
@@ -960,7 +987,7 @@ M161 ; retreat push cylinder
 G4 P1400 ; M333 - push cylinder retreated
 (update tool number to T0, no tool)
 #1300 = 0
-G49 (remove tool height compensation)
+; G49 (remove tool height compensation)
 
 (recovered tool is virtual)
 
@@ -977,13 +1004,23 @@ M302 ; tool locked detection
 G4 P200
 (update tool number)
 #1300 = #1
-G43 H[#1] (tool height compensation)
+; G43 H[#1] (tool height compensation)
 
 M153 ; retract disk magazine
 M304 ; disk magazine retracted
 M51  ; turn off tool air blower
 
 (exit sequence)
+
+; Apply total Z compensation
+; if (#1305 automatic tool heigth compensation = 0) skip
+IF #1305==0 GOTO68;
+#1510 = #12
+#1503 = 1(total Z compensation [Z%.1f])
+G53 G90 Z[#4 + #12] F#1312
+G4 P1000
+N68
+
 M156 ; restore main tool to lower position (work position)
 G4 P1000
 
@@ -1018,6 +1055,6 @@ M150
 
 
 N4
-#1514 = 0//暂停标志
-#1503 = 1000 //清除辅助显示
+#1514 = 0//暂停标志 - Clear pause signal
+#1503 = 1000 //清除辅助显示 - Clear the display
 M99
