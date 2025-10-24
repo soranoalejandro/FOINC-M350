@@ -1,54 +1,57 @@
-O10000
+O10000	// M0
 G04P-1
 M99
 
-O10001
+O10001	// M1
 IF #1500==0 GOTO1
 G04P-1
 N1
 M99
 
-O10002
+O10002	// M2
 M99
 
-O10006
+O10006	// M6
 M99
 
-O10019
+O10019	// M19
 M5
 M99
 
-O10030
+O10030	// M30
 M5M9M11
-IF #730==2 GOTO10
-IF #730==1 GOTO20
+// After Finished 0: No action;
+IF #730==2 GOTO10  // 2: Work Zero
+IF #730==1 GOTO20  // 1: Ref Pos
 GOTO30
 N10
-G90 G00 Z#569
+G90 G00 Z#569	// Z-axis safe height
 G90 G00 X0 Y0 A0 B0
 GOTO30
 
 N20
-G53Z#624
+G53Z#624	// Mach position after Z go home
 #13=0
 #14=0
 #15=0
-#[10+#943] =#625
-#[10+#944] =#626
+// #943 = 4th-axis name 0-5: X Y Z A B C
+#[10+#943] =#625	// Mach position after 4th go home
+// #944 = 5th-axis name 0-5: X Y Z A B C
+#[10+#944] =#626	// Mach position after 5th go home
 G53X#622Y#623Z#624A#13B#14C#15
 GOTO30
 
 N30
-#701 = #701+1
+#701 = #701+1	// update piece counters
 #702 = #702+1
-#1506 = 30
+#1506 = 30	// Single piece processing finished mark
 M99
 
 
-O10047
+O10047	// M47
 #701 = #701+1
 #702 = #702+1
-#1506 = 47
+#1506 = 47	// Single piece processing finished mark
 IF #702==#703 GOTO1
 GOTO2
 N1
@@ -62,7 +65,7 @@ M99
 
 
 
-O10050
+O10050	// M50
 #1552=1
 M99
 
@@ -266,25 +269,25 @@ N4
 M99
 
 //推料动作
-O10102
-M159  //真空泵关闭
-M157 // 定位气缸关闭
+O10102	// M102
+M159  // Vacuum pump off
+M157 // Positioning cylinder off
 G53 Z#1306 F#563 
 #1503 = 1(移动到推料起点.速度:63号参数)
 G53 X#1320 Y#1321 F#563 //移动到推料起点
-M160  //推料打开
+M160  // Pusher cylinder
 G04 P#1322 //推料延时 设置
-#1503 = 1(移动到推料终点.速度:827号参数)
+#1503 = 1(M102: 移动到推料终点.速度:827号参数)
 G53 X#1323 Y#1324 F#1327 //移动到推料终点
-M163  //关闭吸尘器
-#1503 = 1(推料完成后退位置.速度:63号参数)
+M163  // Vacuum cleaner off
+#1503 = 1(Retract position after push completion. Speed: parameter 63)
 G53 X#1325 Y#1326  F#563 //推料完成后退位置
-M156  //定位气缸打开
-M161 //推料关闭
+M156  // Positioner cylinder on
+M161 // Pusher cylinder off
 M99
 
-//程序开始操作
-O10103
+// Program start
+O10103	// M103
 M158 //真空泵打开
 M162 //吸尘器打开
 M157 // 定位气缸关闭
@@ -292,7 +295,7 @@ M161 //推料关闭
 M99
 
 
-//程序结尾操作
+// Program end
 O10104
 M159 //真空泵关闭
 M163 //除尘器打开
