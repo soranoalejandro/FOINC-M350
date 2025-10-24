@@ -2215,8 +2215,11 @@ WHILE [#[1520+#4-1] != #6] DO1
 #1510 = #4
 #1503 = 1(Spindle stop detection.. [IN%.0f])
 G04 P10
+GOTO40
 END1 
 N30
+G4 P2000 (use a fixed delay of 2 seconds in case there is no sensor enabled)
+N40
 M99
 
 // M301 µ¶¾ßËÉ¿ª¼ì²â
@@ -2337,4 +2340,40 @@ WHILE [#[1520+#4-1] != #6] DO1
 G04 P10
 END1 
 N30
+M99
+
+// M370 Disk cutter - extend
+O10370
+M72 // disk cutter motor - on
+G04 P600
+// check if there is no thermal switch alarm...
+M78 // disk cutter - extend
+G04 P3000
+M99
+
+// M371 Disk cutter - retract
+O10371
+M79 // disk cutter - retract
+G04 P1000
+M73 // disk cutter motor - off
+M99
+
+// M372 Disk cutter - X position
+O10372
+M371 // Disk cutter - retract
+M74 // disk cutter X - turn on
+M77 // disk cutter Y - turn off
+G04 P1000
+M370 // Disk cutter - extend
+N90
+M99
+
+// M373 Disk cutter - Y position
+O10373
+M371 // Disk cutter - retract
+M75 // disk cutter X - turn off
+M76 // disk cutter Y - turn on
+G04 P1000
+M370 // Disk cutter - extend
+N90
 M99
