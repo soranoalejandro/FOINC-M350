@@ -2377,3 +2377,16 @@ G04 P1000
 M370 // Disk cutter - extend
 N90
 M99
+
+// M380 Incrementar contador de piezas
+O10380
+#701 = #701+1
+#702 = #702+1
+//#1506 = 47	Single piece processing finished mark
+M99
+
+// M381 Borrar contador de piezas
+O10381
+#702 = 0
+//#1506 = 47	Single piece processing finished mark
+M99
